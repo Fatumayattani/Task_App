@@ -6,15 +6,17 @@ function addTask() {
         alert("You must write something!");
     } else {
         let li = document.createElement("li");
-        li.textContent = inputBox.value; // Changed innerHTML to textContent
-        listContainer.appendChild(li);
-
+        li.textContent = inputBox.value;
+        
         let span = document.createElement("span");
-        span.textContent = "\u00d7"; // Changed innerHTML to textContent
+        span.textContent = "\u00d7";
         li.appendChild(span);
+        
+        listContainer.appendChild(li);
+        
+        inputBox.value = "";
+        saveData();
     }
-    inputBox.value = "";
-    saveData();
 }
 
 listContainer.addEventListener("click", function (e) {
@@ -25,14 +27,32 @@ listContainer.addEventListener("click", function (e) {
         e.target.parentElement.remove();
         saveData();
     }
-}, false);
+});
 
 function saveData() {
-    localStorage.setItem("data", listContainer.innerHTML);
+    const tasks = Array.from(listContainer.querySelectorAll("li")).map(li => li.textContent);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 function showTask() {
-    listContainer.innerHTML = localStorage.getItem("data");
+    const storedTasks = localStorage.getItem("tasks");
+    if (storedTasks) {
+        const tasks = JSON.parse(storedTasks);
+        tasks.forEach(task => {
+            const li = document.createElement("li");
+            li.textContent = task;
+            
+            const span = document.createElement("span");
+            span.textContent = "\u00d7";
+            li.appendChild(span);
+            
+            listContainer.appendChild(li);
+        });
+    }
 }
 
 showTask();
+
+
+
+
